@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <link rel="stylesheet" href="{{url_for('static', filename='base.css')}}">
+      <script src="{{url_for('static', filename='webcomparison.js')}}"> </script>
+        {% block title %}
+            {% if title %}
+                <title>{{ title }} - WebComparison</title>
+            {% else %}
+              <title> WebComparison </title>
+            {% endif %}
+        {% endblock %}
+
+          <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <link href="/static/assets/css/styles.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+      {{ bootstrap.load_css() }}
+    </head>
+    <body class="sb-nav-fixed">
+        
+    {% include 'includes/navigation.html' %}
+
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+
+            {% include 'includes/sidebar.html' %}
+            
+        </div>
+        <div id="layoutSidenav_content">
+        
+            {% block content %}{% endblock content %}
+
+            {% include 'includes/footer.html' %}
+            
+        </div>
+    </div>
+
+        
+
+      {{ bootstrap.load_js() }}
+      {% include 'includes/scripts.html' %} 
+
+      <!-- Specific Page JS goes HERE  -->
+      {% block javascripts %}{% endblock javascripts %}
+    </body>
+</html>

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagetitle">
+  <h1>Word Comparison</h1>
+  
+</div>
+<form method="post"'>
+<div class="pagetext topic">Enter a word, and we will find how many times that word occurs on both Labour and National's webpages!</div>
+<div class="topic">
+  <input id="word" name="word" type="text"> 
+</div>
+  <br>
+  <br>
+  <div name="word button" class='topic'>
+    <button class='comp-button' id='input_word'>Compare</button>
+    {% if errors %}
+      <p>{{error}}</p>
+    {% endif %}
+  </div>
+</form>
+{% if labour_row %}
+  <div name="result_1" id='result_1' class='option_1 option_border pagetext'>
+    <h3 class="innertext">Labour:</h3>
+    <table class="innertext ">
+      <tr>
+        <th>Word:</th>
+        <th>Number of Occurances</th>
+      </tr>
+      <tr>
+        <td>{{labour_row[0]}}</td>
+        <td>{{labour_row[1]}}</td>
+      </tr>
+    </table>
+    {% if lab_relation %}
+      <p>{{lab_relation}}</p>
+    {% endif %}
+  </div>
+{% endif %}
+{% if national_row %}
+  <div name="result_2" id='result_2' class='option_2 option_border pagetext'>
+    <h3 class="innertext">National:</h3>
+      <table class="innertext">
+      <tr>
+        <th>Word:</th>
+        <th>Number of Occurances</th>
+      </tr>
+      <tr>
+        <td>{{national_row[0]}}</td>
+        <td>{{national_row[1]}}</td>
+      </tr>
+    </table>
+    {% if nat_relation %}
+      <p>{{nat_relation}}</p>
+    {% endif %}
+  </div>
+{% endif %}
+{% if graph %}
+<!-- Chart data -->
+<canvas id="piechart" width="400" height='400'>
+<script>
+  const Chart = require('chart.js');
+  const chart = document.getElementById('piechart');
+  const pChart = new Chart(chart, {
+    type: 'pie',
+    data: {
+      labels: ['Labour', 'National'],
+      datasets: [{
+        label: labour_row[0],
+        data: [labour_row[1], national_row[1]]
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+<div class="graph">
+  <img src={{graph}}>
+  <img src={{pie}}>
+</div>
+{% endif %}
+{% endblock %}

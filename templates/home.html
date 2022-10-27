@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %} 
+<div class='pagetitle'>
+    <h1>Home</h1>
+</div>
+<!--<div class='pagetext topic'>
+    <p>Welcome to WebComparisons. A site to compare website content accross different pages.</p>
+</div>-->
+<div class='pagetext topic option_border'>
+    <!--Search tab-->
+    <div id="menu" class="menu">
+        <div onclick="search()" id = "search" class="appnav search">
+            <p>Search</p>
+        </div>
+        <!--View parties tab-->
+        <div id="view" class="appnav view" onclick="view()">
+            <p>View</p>
+        </div>
+    </div>
+    <!--Content tab-->
+    <div id="content" class="content">
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,173 @@
+body {
+  background-color:#cccddd
+}
+.navbardiv {
+  background-color: #101344;
+  overflow: hidden;
+}
+
+img {
+  display: inline;
+  width: 100%;
+  height: 50%;
+}
+
+.option_1 {
+  float: left;
+  width: 40%;
+  height: 20%;
+}
+
+.option_border:not(:empty) {
+  border-style: solid;
+  border-color: #101344;
+  background-color: #d4d6f5;
+}
+
+.option_2 {
+  float:right;
+  width: 40%;
+  height: 20%;
+}
+
+.navbardiv a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 1% 2%;
+  text-decoration: none;
+  font-size: 140%;
+  font-family: Courier, monospace;
+}
+
+.navbardiv p {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 1% 2%;
+  text-decoration: none;
+  font-size: 140%;
+  margin: 0px 0px 0px 0px;
+  font-family: Courier, monospace;
+}
+
+.navbardiv a:hover {
+  background-color: #83c9f9;
+  color: black;
+}
+
+.navbardiv a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/*CSS for comparing pages*/
+.firstoption {
+  float:left;
+  display:inline;
+  margin-top: 5%;
+  margin-left:5%;
+}
+
+.secondoption {
+  float:right;
+  display:inline;
+  margin-top: 5%;
+  margin-right:5%;
+}
+
+select {
+  background-color:#d4d6f5;
+  font-size: 100%;
+}
+
+.pagetitle {
+  text-align: center;
+  font-family: Courier, monospace;
+  font-size: 35px;
+  background-color: #d4d6f5;
+  padding: 30px;
+}
+
+.pagetitle h1 {
+  margin:0 0 0 0;
+}
+
+.topic {
+  margin-top: 30px;
+  justify-content: center;
+}
+
+.comp-button {
+  font-size: 20px;
+  border: none;
+  background-color: #d4d6f5;
+  text-decoration:none;
+  padding: 15px 15px;
+}
+
+.comp-button:hover {
+  background-color: #ecedff;
+}
+
+.pagetext {
+  font-family: Courier, monospace;
+}
+
+.innertext {
+  margin: 5% 5% 5%
+}
+
+td, th {
+  border: 1px solid black;
+  padding: 5px;
+}
+
+table {
+  border-collapse: collapse;
+  background-color: #eaebfa;
+}
+
+.graph {
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top: 15%;
+  width: 40%;
+  height: 20%;
+  border: 3px solid #101344
+}
+
+/* for search and view feature */
+.appnav {
+  float: left;
+  cursor:pointer;
+  display:inline-flex;
+  width: 50%;
+  justify-content: center;
+  border: 1px solid #101344;
+}
+
+.menu {
+  width: 100%;
+  grid-gap: 0px;
+  display: flex;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+.contentitems {
+  height: 40%;
+}
+
+@media screen {
+  .search,
+  .view {
+    float: none;
+    width: 100%
+  }
+}

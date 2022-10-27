@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Web Domains Comparison</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="static/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="static/assets/css/sb-admin-2.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        window.onload = function(){
+        document.getElementById("search_input").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {  
+                clicktest();
+            }
+        })
+        //For the comparison tab
+        document.getElementById("compare_tab_search").addEventListener("keydown", function (e) {
+            if(e.key === "Enter") {
+                compare_tab()
+            }
+        })
+        }
+
+        //function to connect the js script and html input for word comparison tab
+        function compare_tab(){
+            word_1 = document.getElementById("search_input").value
+            word_2 = document.getElementById("compare_tab_search").value
+            console.log(word_1 + word_2)
+            $.get('/get_word2vec/' + word_1 + '/' + word_2,
+                function(data) {
+                    if(data == 'na') {
+                        alert("There are no occurances of " + word_2 + ". Please try another word")
+                    } else {
+                        console.log("Compare")
+                        nat_similarity = data["nat_similarity"]
+                        lab_similarity = data["lab_similarity"]
+                        compareWords([word_1, word_2], [nat_similarity, lab_similarity])
+                    }
+                    /*
+                    title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800">Similarity between words "' + search_1.value + '" and "' + search_2.value + '"</h1></div><hr>'
+                    lab_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800">(The higher the similarity value, the more likely the words will be seen together)</h3></div>'
+
+                    lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for Labour" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for National" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_similarity +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    for(let i = 0; i<Object.keys(lab_similarity).length; i++) {
+                        lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + lab_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+
+                    for(let i = 0; i<Object.keys(nat_similarity).length; i++) {
+                        nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + nat_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_similarity[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+
+                    document.getElementById("lab_wordclouds").innerHTML = ""
+                    document.getElementById("nat_wordclouds").innerHTML = ""*/
+                }
+            )
+        }
+        //Used for related words
+        function clicktest() {
+            document.getElementById("pagetitletext").innerHTML = "Choose a tab from the above navigation bar to view results"
+            document.getElementById("navtab").style.display = "flex" //Show the navigation tab when a search is initiated
+            document.getElementById("corpussize").style.display = "none"
+            console.log("clicktest")
+            search_1 = document.getElementById('search_input')
+            search_2 = document.getElementById('search_input_2')
+            nat_div = document.getElementById("nat_data")
+            lab_div = document.getElementById("lab_data")
+            title = document.getElementById("title_placeholder")
+            nat_div.innerHTML = ""
+            lab_div.innerHTML = ""
+            title.innerHTML = ""
+            $.get('/get_word2vec/' + search.value,
+                function(data_dict, status) {
+                    if(data_dict["labour"] == "No Occurances" || data_dict["national"] == "No Occurances") {
+                        console.log("No Occurances")
+                        alert("No Occurances of this word exist in the corpus. Returning to homepage.")
+                        document.getElementById("navtab").style.display = 'none'
+                        openTab(event, 'none')
+                        document.getElementById("pagetitle").style.display = "flex"
+                        document.getElementById("pagetitletext").innerHTML = "Enter a word into the searchbar to begin"
+                    }
+                    console.log(search_input)
+                    national_data = data_dict["national"]
+                    labour_data = data_dict["labour"]
+                    create_wordcloud([labour_data, '#ed1c1c', 'Labour'])
+                    create_wordcloud([national_data, '#183ead', 'National'])
+                    nat_div = document.getElementById("nat_data")
+                    lab_div = document.getElementById("lab_data")
+                    title = document.getElementById("title_placeholder")
+                    nat_div.innerHTML = ""
+                    title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800 title-decoration">Related Words</h1></div><hr>'
+                    nat_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800 title-decoration">Related words for National</h3></div><hr>'
+                    lab_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800 title-decoration">Related Words for Labour</h3></div><hr>'
+
+                    //Extracting keys and values from the national_data dictionary
+                    nat_words = Object.keys(national_data)
+                    nat_values = Object.values(national_data)
+                    //Extracting keys and values from the labour_data dictionary
+                    lab_words = Object.keys(labour_data)
+                    lab_values = Object.values(labour_data)
+
+                    for(let i = 0; i<lab_words.length; i++) {
+                        lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + labour_data[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ labour_data[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+
+                    for(let i = 0; i<nat_words.length; i++) {
+                        nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + national_data[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ national_data[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+            });
+            return false;
+          };
+        $(function() {
+          $('a#compare_form').on('click', function(e){
+            e.preventDefault()
+            console.log("Compare")
+            search_1 = document.getElementById('search_input')
+            search_2 = document.getElementById('search_input_2')
+            nat_div = document.getElementById("nat_data")
+            lab_div = document.getElementById("lab_data")
+            title = document.getElementById("title_placeholder")
+            nat_div.innerHTML = ""
+            lab_div.innerHTML = ""
+            title.innerHTML = ""
+            $.get('/get_word2vec/' + search_1.value + '/' + search_2.value,
+                function(data) {
+                    console.log("Compare")
+                    nat_similarity = data["nat_similarity"]
+                    lab_similarity = data["lab_similarity"]
+
+                    title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800">Similarity between words "' + search_1.value + '" and "' + search_2.value + '"</h1></div><hr>'
+                    lab_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800">(The higher the similarity value, the more likely the words will be seen together)</h3></div>'
+
+                    lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for Labour" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for National" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_similarity +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    for(let i = 0; i<Object.keys(lab_similarity).length; i++) {
+                        lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + lab_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+
+                    for(let i = 0; i<Object.keys(nat_similarity).length; i++) {
+                        nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + nat_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_similarity[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+
+                    document.getElementById("lab_wordclouds").innerHTML = ""
+                    document.getElementById("nat_wordclouds").innerHTML = ""
+                }
+            )
+          });
+          /*$('a#search_form').on('click', function(e) {
+            e.preventDefault()
+            console.log("seach fprm")
+            search = document.getElementById("search_input") //Retrieving the data from the search field
+            $.get('/get_word2vec/' + search.value,
+                function(data_dict, status) {
+                    create_wordcloud([labour_data, '#ed1c1c', 'Labour'])
+                    create_wordcloud([national_data, '#183ead', 'National'])
+                    national_data = data_dict["national"]
+                    labour_data = data_dict["labour"]
+
+                    nat_div = document.getElementById("nat_data") 
+                    lab_div = document.getElementById("lab_data")
+                    title = document.getElementById("title_placeholder")
+                    nat_div.innerHTML = ""
+                    title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800">Related Words</h1></div><hr>'
+                    nat_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800">Related words for National</h3></div><hr>'
+                    lab_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800">Related Words for Labour</h3></div><hr>'
+
+                    //Extracting keys and values from the national_data dictionary
+                    nat_words = Object.keys(national_data)
+                    nat_values = Object.values(national_data)
+                    //Extracting keys and values from the labour_data dictionary
+                    lab_words = Object.keys(labour_data)
+                    lab_values = Object.values(labour_data)
+
+                    for(let i = 0; i<lab_words.length; i++) {
+                        lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + labour_data[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ labour_data[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+
+                    for(let i = 0; i<nat_words.length; i++) {
+                        nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + national_data[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ national_data[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+                    }
+            });
+            return false;
+          })*/;
+        });
+
+    </script>
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/index">
+                <div class="sidebar-brand-text mx-3">Web Domains Comparison</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="/index">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+            <div class="sidebar-heading">Parties</div>
+            <!-- Party tab -->
+            <li class="nav-item active">
+                <a class="nav-link" style="cursor: pointer;">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span onclick="create_party_graphs('Labour')">Labour</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" style="cursor:pointer;">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span onclick="create_party_graphs('National')">National</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    
+                    <div class="input-group">
+                        <div class="dropdown">
+                            <button class="dropbtn">Search:</button>
+                            <div id="myDropdown" class="dropdown-content">
+                                <a id="single_search" onclick="single_search()" href="#">Search Word</a>
+                                <a id="compare_search"  onclick="compareWords()" href="#">Compare Words</a>
+                            </div>
+                          </div> 
+                        <div id="single-search" class="form-control bg-light border-0 small">
+                            <input id="search_input" type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                        </div>
+                        <div id = "hidden_div_1" style="display:none">
+                            <p>Compared To: </p>
+                        </div>
+                        <div id = "hidden_div_2" style="display: none;" class="compare-search">
+                        <input id="search_input_2" type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                            aria-label="Search" aria-describedby="basic-addon2">
+                        </div>
+                        <div class="input-group-append">
+                            <form id="search-word">
+                            <a href="#" id="search_form">
+                                <button onclick="searchWord(); clicktest()" class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </a> </form>
+                            <form id="compare-word" style="display:none">
+                                <a href="#" id="compare_form">
+                                    <button onclick="search_compare_word()" class="btn btn-primary" type="button">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
+                                </a> 
+                            </form>
+                        </div>
+                    </div>
+
+                </nav>
+                <!-- End of Topbar -->
+                <!-- navigation tab -->
+                <div id="navtab" class="tab" style="display:none;">
+                    <button class="tablinks" onclick="openTab(event, 'frequencies')">Word Frequencies</button>
+                    <button class="tablinks" onclick="openTab(event, 'wordclouds')">Word Clouds</button>
+                    <button class="tablinks" onclick="openTab(event, 'related')">Related Words</button>
+                    <button class="tablinks" onclick="openTab(event, 'compare')">Compare Words</button>
+                </div>
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div id="pagetitle" class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 id = "pagetitletext" class="h3 mb-0 text-gray-800 title-decoration">Enter a word into the searchbar to begin</h1>
+                    </div>
+
+                    <!-- Content Row -->
+
+                    <div class="row">
+
+                        <!--Word Frequencies-->
+                        <div id="frequencies" class="tabcontent">
+                            <!-- Area Chart -->
+                            <div class="col-xl-8 col-lg-7">
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Dropdown -->
+                                    <div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Representitive Frequencies</h6>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="card-body">
+                                        <div id="chart-bar" class = "chart-bar">
+                                            <canvas id="myBarChart"></canvas>
+                                        </div>
+                                        <div id="bar-chart-area"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pie Chart -->
+                            <div class="col-xl-4 col-lg-5">
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Dropdown -->
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Representitive Frequencies</h6>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="card-body">
+                                        <div class="chart-pie pt-4 pb-2">
+                                            <canvas id="myPieChart"></canvas>
+                                        </div>
+                                        <div id="pie-chart-area" class="mt-4 text-center small">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--End of word frequencies tab-->
+
+
+                        <div id="corpussize" style="width:100%;">
+                            <div id="card_top_div" class="row" style="margin-left: -.75rem;"></div>
+                        </div>
+
+                        <!--Word cloud tab-->
+                        <div id="wordclouds" class="tabcontent" style="flex-direction:column;">
+                            <div class="container-fluid">
+                                <div id="title_placeholder"></div>
+                            </div>
+                            <div id="wordcloud_divs" style="flex-direction: row;display: flex;">
+                                <div id="lab_wordclouds" class="wordcloud col-lg-5"></div>
+                                <div id="nat_wordclouds" class="wordcloud col-lg-5"></div>
+                            </div>
+                        </div>
+                        <!--End of wordcloud tab-->
+
+                        <!--Related words tab-->
+                        <div id="related" class="tabcontent">
+                            <!--REMOVED FEATURE (HIDE/SHOW RELATED WORDS)-->
+                            <!--<div id="buttons" class="buttons-toggle" style="display: none">    REMOVED FEATURE (HIDE/SHOW RELATED WORDS)
+                                <button id="related_words_toggle" onclick="toggle_related_words()" class="toggle-buttons">Show All Related Words</button>
+                            </div>-->
+                            <div class="container-fluid">
+                                <div id="lab_data" class="vector_data row"></div>
+                                <div id="nat_data" class="vector_data row"></div>
+                            </div>
+                        </div>
+                        <!--End of related words tab-->
+
+                        <!--Word Comparison Tab-->
+                        <div id="compare" class="tabcontent" style="flex-direction:column;">
+                            <div id="search_field" class="compare-searchtab">
+                                <div id="searchbar" class="compare-searchbar">
+                                    <input id="compare_tab_search" type="text" class="form-control bg-white border-0 small shadow" placeholder="Search for..."
+                                    aria-label="Search" aria-describedby="basic-addon2">
+                                    <button onclick="compare_tab()" class="btn btn-primary" type="button">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
+                                </div>
+                                <div id="compare_title"></div>
+                            </div>
+                            <div id="compare_data" class="compare-data">
+                                <div id = "compare_lab_data" class="compare-data-item"></div>
+                                <div id = "compare_nat_data" class="compare-data-item"></div>
+                            </div>
+                            <div id="compare_graphs" style="display:none;">
+                                <div class="col-xl-8">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                            <h6 class="m-0 font-weight-bold text-primary">Representitive Frequencies</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="chart-bar" class = "chart-bar">
+                                                <canvas id="compareBarChart"></canvas>
+                                            </div>
+                                            <div id="compare-bar-chart-area"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="static/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="static/assets/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="static/assets/vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="https://d3js.org/d3.v5.min.js"></script> <!--Used for csv parsing-->
+    <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script> <!--Used for wordcloud generation-->
+    <script src="./static/assets/js/index.js"></script>
+
+</body>
+
+</html>

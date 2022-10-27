@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pagetitle">
+  <h1>Compare</h1>
+</div>
+<!--<form method="POST">-->
+  <div name="first_option" class='firstoption'>
+    <select name='options_1' id='options_1'>
+      <option disabled selected value="Select Data">Choose the first company/organisation to compare</option>
+      <option value='Labour'>Labour</option>
+      <option value='National'>National</option>
+    </select>
+  </div>
+
+  <div name="second_option" class='secondoption'>
+    <select name='options_2' id='options_2'>
+      <option disabled selected value="Select Data">Choose the second company/organisation to compare</option>
+      <option value='Labour'>Labour</option>
+      <option value='National'>National</option>
+    </select>
+  </div>
+
+  <div name="topic" class='topic'>
+    <select name="topic">
+      <option disabled selected value="Select Topic">Select Topic</option>
+      <option value="Environment">Environment</option>
+      <option value="Covid">Covid</option>
+      <option value="Money">Money</option>
+    </select>
+  </div>
+  <br>
+  <br>
+  <div name="assess button" class='topic'>
+    <button class='comp-button' onclick="compare()">Compare</button>
+    {% if errors %}
+      <p>{{error}}</p>
+    {% endif %}
+  </div>
+<!--</form>-->
+
+  <div name="result_1" id='result_1' class='option_1 option_border'></div>
+  <div name="result_2" id='result_2' class='option_2 option_border'></div>
+{% endblock %}
