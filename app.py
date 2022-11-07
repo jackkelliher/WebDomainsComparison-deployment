@@ -217,20 +217,20 @@ def bootstrap():
   #national_file = open('static/national_word_frequency.csv', 'r', encoding='utf8')
   national_model = Word2Vec.load('static/national_stored_model.wv')
   labour_model = Word2Vec.load('static/labour_stored_model.wv')
-  national_word_relation = national_model.wv.most_similar(positive=[f'{"environment"}'])
-  labour_word_relation = labour_model.wv.most_similar(positive=[f'{"labour"}'])
-  return render_template('bootstraptesting.html', data=national_word_relation)
+  #national_word_relation = national_model.wv.most_similar(positive=[f'{"environment"}'])
+  #labour_word_relation = labour_model.wv.most_similar(positive=[f'{"labour"}'])
+  return render_template('bootstraptesting.html')
 
 @app.route("/get_word2vec/<word>")
 def get_word2vec(word):
   national_model = Word2Vec.load('static/national_stored_model.wv')
   labour_model = Word2Vec.load('static/labour_stored_model.wv')
   try:
-    national_word_relation = national_model.wv.most_similar(positive=[f'{word}'])
+    national_word_relation = national_model.wv.most_similar(positive=[f'{word}'], topn=40)
   except:
     national_word_relation = "No Occurances"
   try:
-    labour_word_relation = labour_model.wv.most_similar(positive=[f'{word}'])
+    labour_word_relation = labour_model.wv.most_similar(positive=[f'{word}'], topn=40)
   except:
     labour_word_relation = "No Occurances"
   return_dict = {"national": national_word_relation, "labour": labour_word_relation}

@@ -3,6 +3,30 @@ var myBarChart
 var compareBarChart
 var myPieChart
 
+//Loading up csv data for graphs
+d3.csv("./static/labour_word_frequency.csv").then((Labour)=> {
+  d3.csv("./static/national_word_frequency.csv").then((National)=> {
+    console.log("Making csv")
+    data_collection = {Labour, National}
+    data_col_len = Object.keys(data_collection).length
+    //Setting correct variables for top row cards
+    card_div = document.getElementById("card_top_div")
+    for(let i =0; i < data_col_len; i++) {
+      let party_data_len = data_collection[Object.keys(data_collection)[i]].length
+      //card_div.innerHTML += '<div class="col-md-6 mb-4"><div class="card border-left-success shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + Object.keys(data_collection)[i] + " Corpus Size" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ party_data_len +'</div></div><div class="col-auto"></div></div></div></div></div>'
+    }
+    /*words = find_word("environment")
+    colours = ['#bd1313', '#133087'] //Setting colours array to the suitable colour for each of the parties
+    if(words[0]["count"] > words[1]["count"]){
+      max_value = words[0]["count"]
+    } else {
+      max_value = words[1]["count"]
+    }
+    graph_data = [words, colours, max_value, ['Labour', 'National']]
+    create_graphs(graph_data)
+    key_data = [words, colours]*/
+})});
+
 searchbar = document.getElementById("search_input")
 searchbar.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {  
@@ -15,7 +39,10 @@ function searchWord() {
   if(document.getElementById("lab_data")){
     document.getElementById("lab_data").innerHTML = ""
   }
-  search = document.getElementById("search_input") //Retrieving the data from the search field
+  search = document.getElementById("search_input_frequencies")
+  if(search.value == "") {
+    search = document.getElementById("search_input") //Retrieving the data from the search field
+  }
   words_data = find_word(search.value) //Using the find_word function to retrieve the suitable data from each of the parties
   colours = ['#bd1313', '#133087'] //Setting colours array to the suitable colour for each of the parties
   //If else function to determine which data is larger
@@ -57,32 +84,10 @@ function create_graphs(data){
   create_pie_graph(data)
 }
 
-//Loading up csv data for graphs
-d3.csv("./static/labour_word_frequency.csv").then((Labour)=> {
-  d3.csv("./static/national_word_frequency.csv").then((National)=> {
-    data_collection = {Labour, National}
-    data_col_len = Object.keys(data_collection).length
-    //Setting correct variables for top row cards
-    card_div = document.getElementById("card_top_div")
-    for(let i =0; i < data_col_len; i++) {
-      let party_data_len = data_collection[Object.keys(data_collection)[i]].length
-      card_div.innerHTML += '<div class="col-md-6 mb-4"><div class="card border-left-success shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + Object.keys(data_collection)[i] + " Corpus Size" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ party_data_len +'</div></div><div class="col-auto"></div></div></div></div></div>'
-    }
-    words = find_word("environment")
-    colours = ['#bd1313', '#133087'] //Setting colours array to the suitable colour for each of the parties
-    if(words[0]["count"] > words[1]["count"]){
-      max_value = words[0]["count"]
-    } else {
-      max_value = words[1]["count"]
-    }
-    graph_data = [words, colours, max_value, ['Labour', 'National']]
-    create_graphs(graph_data)
-    key_data = [words, colours]
-})});
-
 //Finds a specific word in the csv files
 function find_word(word) {
     //Getting data 
+    console.log(word)
     for(item of data_collection["Labour"]){
       if(item["word"] == word) {
         csv_data_labour = item
@@ -290,7 +295,7 @@ function create_party_bar_graph(graph_data) {
 }
 
 function create_party_graphs(party) {
-  document.getElementById("buttons").style.display = "none"
+  //document.getElementById("buttons").style.display = "none"
   colours = []
   if (party == 'Labour') {
     party_array = data_collection["Labour"]
@@ -352,14 +357,14 @@ function compareWords(words, word_relations) {
 
   title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800">Similarity between words "' + word_1 + '" and "' + word_2 + '"</h1></div><hr>'
 
-  lab_div.innerHTML = '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for Labour" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_sim +'</div></div><div class="col-auto"></div></div></div></div></div>'
-  nat_div.innerHTML = '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for National" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_sim +'</div></div><div class="col-auto"></div></div></div></div></div>'
+  lab_div.innerHTML = '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for Labour" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_sim.toFixed(3) +'</div></div><div class="col-auto"></div></div></div></div></div>'
+  nat_div.innerHTML = '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for National" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_sim.toFixed(3) +'</div></div><div class="col-auto"></div></div></div></div></div>'
   for(let i = 0; i<Object.keys(lab_similarity).length; i++) {
-      lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + lab_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+      lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + lab_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity[i][1].toFixed(3) +'</div></div><div class="col-auto"></div></div></div></div></div>'
   }
 
   for(let i = 0; i<Object.keys(nat_similarity).length; i++) {
-      nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + nat_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_similarity[i][1] +'</div></div><div class="col-auto"></div></div></div></div></div>'
+      nat_div.innerHTML += '<div class="mb-4"><div class="card national_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + nat_similarity[i][0] + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ nat_similarity[i][1].toFixed(3) +'</div></div><div class="col-auto"></div></div></div></div></div>'
   }
 
   //If else function to determine which data is larger
@@ -730,8 +735,13 @@ function showtip(word, size, party){
   } else {
     div = document.getElementById("nat_textdiv")
   }
+  if(size != 'Undefined'){
+    round_size = parseFloat(size).toFixed(3)
+  } else {
+    round_size = size
+  }
   div.innerHTML = ""
-  div.innerHTML += '<div style="text-align:center; background-color:#f8f9fc;"><hr><b> Word: </b> <p>' + word + "</p> <b>Relation Frequency:</b> <p>" + size + '</p></div>'
+  div.innerHTML += '<div style="text-align:center; background-color:#f8f9fc;"><hr><b> Word: </b> <p>' + word + "</p> <b>Relation Frequency:</b> <p>" + String(round_size) + '</p></div>'
 }
 
 
@@ -787,48 +797,88 @@ function create_wordcloud_backup(wordcloud_data) {
           })
           .text(function(d) { return d.text; });
   }
+}
+
+function toggle_related_words(list) {
+  console.log("working")
+  target_1 = document.getElementById("lab_data")
+  target_2 = document.getElementById("nat_data")
+  words_toggle = document.getElementById("related_words_toggle")
+  if(target_1.style.display == 'none') {  
+    target_1.style.display = ''
+    target_2.style.display = ''
+    words_toggle.style.backgroundColor = "#b3b3b3"
+    words_toggle.innerHTML = "Hide All Related Words"
+  } else {
+    target_1.style.display = 'none'
+    target_2.style.display = 'none'
+    words_toggle.style.backgroundColor = "#fff"
+    words_toggle.innerHTML = "Show All Related Words"
+  }
+}
+
+function openTab(evt, tabName) {
+  document.getElementById('topsearch').style.display = "none"
+  console.log("Changing tabs")
+  document.getElementById("landing-screen").style.display = "none"
+  //Removing welcome page title
+  document.getElementById('pagetitle').style.display = "none"
+
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
   }
 
-  function toggle_related_words(list) {
-    console.log("working")
-    target_1 = document.getElementById("lab_data")
-    target_2 = document.getElementById("nat_data")
-    words_toggle = document.getElementById("related_words_toggle")
-    if(target_1.style.display == 'none') {  
-      target_1.style.display = ''
-      target_2.style.display = ''
-      words_toggle.style.backgroundColor = "#b3b3b3"
-      words_toggle.innerHTML = "Hide All Related Words"
-    } else {
-      target_1.style.display = 'none'
-      target_2.style.display = 'none'
-      words_toggle.style.backgroundColor = "#fff"
-      words_toggle.innerHTML = "Show All Related Words"
-    }
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("nav-link");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
 
-  function openTab(evt, tabName) {
-    //Removing welcome page title
-    document.getElementById('pagetitle').style.display = "none"
-
-    // Declare all variables
-    var i, tabcontent, tablinks;
-  
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-  
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    if(tabName != "none") {
-
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabName).style.display = "flex";
-    evt.currentTarget.className += " active";
-    }
+  switch(tabName){
+    case 'frequencies':
+      //evt.currentTarget.className += ' active'
+      document.getElementById("frequencies").style.display = "block"
+      break;
+    case 'wordclouds':
+      //evt.currentTarget.className += ' active'
+      document.getElementById("wordclouds").style.display = "block"
+      break;
+    case 'related':
+      document.getElementById("related_words").style.display = "block"
+      break
+    case 'compare':
+      document.getElementById("compare_words").style.display = "block"
+      break;
+    case 'Labour':
+      console.log("labour")
+      document.getElementById("landing-screen").style.display = "none"
+      document.getElementById("labour_title").style.display = "block"
+      document.getElementById("frequencies_charts").style.display = "flex"
+      document.getElementById("wordclouds_charts").style.display = "flex"
+      create_party_graphs('Labour')
+      break;
+    case 'National':
+      document.getElementById("landing-screen").style.display = "none"
+      document.getElementById("national_title").style.display = "block"
+      document.getElementById("frequencies_charts").style.display = "flex"
+      document.getElementById("wordclouds_charts").style.display = "flex"
+      create_party_graphs('National')
+      break;
+    default:
+      document.getElementById("landing-screen").style.display = ""
   }
+
+  /*if(tabName == 'frequencies' && !myBarChart){
+    evt.currentTarget.className += " active" 
+  } else */if(tabName != "none") {
+
+  // Show the current tab, and add an "active" class to the button that opened the tab*/
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+  }
+}
