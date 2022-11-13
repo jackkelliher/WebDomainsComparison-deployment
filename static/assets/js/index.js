@@ -30,19 +30,26 @@ d3.csv("./static/labour_word_frequency.csv").then((Labour)=> {
 searchbar = document.getElementById("search_input")
 searchbar.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {  
-    searchWord(e);
+    searchWord('topsearch');
   }
 });
 //Used for search features
-function searchWord() {
+function searchWord(search_area) {
   //document.getElementById("buttons").style.display = ""
+  switch(search_area){
+    case 'topsearch':
+      search = document.getElementById('search_input')
+      break;
+    case 'frequencies':
+      search = document.getElementById('search_input_frequencies')
+  }
   if(document.getElementById("lab_data")){
     document.getElementById("lab_data").innerHTML = ""
   }
-  search = document.getElementById("search_input_frequencies")
+  /*search = document.getElementById("search_input_frequencies")
   if(search.value == "") {
     search = document.getElementById("search_input") //Retrieving the data from the search field
-  }
+  }*/
   words_data = find_word(search.value) //Using the find_word function to retrieve the suitable data from each of the parties
   colours = ['#bd1313', '#133087'] //Setting colours array to the suitable colour for each of the parties
   //If else function to determine which data is larger
@@ -665,7 +672,6 @@ function create_wordcloud(wordcloud_data) {
       if(words[i][0].includes('_')){
         words[i][0] = words[i][0].replace('_', ' ')
       }
-      console.log(words[i][1])
       myWords.push( {word: words[i][0], size: sizes[i], true_size: words[i][1]})
     } else {
       console.log(words[i]["count"])
@@ -838,7 +844,7 @@ function openTab(evt, tabName) {
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
   }
-
+  console.log("switching")
   switch(tabName){
     case 'frequencies':
       //evt.currentTarget.className += ' active'
@@ -852,6 +858,8 @@ function openTab(evt, tabName) {
       document.getElementById("related_words").style.display = "block"
       break
     case 'compare':
+      console.log("Switching to compare")
+      document.getElementById("landing-screen").style.display = "none"
       document.getElementById("compare_words").style.display = "block"
       break;
     case 'Labour':

@@ -24,28 +24,28 @@
         window.onload = function(){
         document.getElementById("search_input").addEventListener("keydown", function (e) {
             if (e.key === "Enter") {  
-                searchWord();
-                clicktest();
+                searchWord('topsearch');
+                clicktest("topsearch");
             }
         })
 
         document.getElementById("search_input_frequencies").addEventListener("keydown", function(e){
             if(e.key === "Enter") {  
-                searchWord();
+                searchWord('frequencies');
                 clicktest("frequencies");
             }
         })
 
         document.getElementById("search_input_wordcloud").addEventListener("keydown", function(e){
             if(e.key === "Enter") {  
-                searchWord();
+                searchWord('frequencies');
                 clicktest("wordclouds");
             }
         })
 
         document.getElementById("search_input_related").addEventListener("keydown", function(e){
             if(e.key === "Enter") {  
-                searchWord();
+                searchWord('frequencies');
                 clicktest("related_words");
             }
         })
@@ -113,6 +113,11 @@
                     document.getElementById("related_words_charts").style.display = "flex"
                     search = document.getElementById("search_input_related")
                     break;
+                case "topsearch":
+                    console.log("topsearch")
+                    search = document.getElementById('search_input')
+                    console.log(search)
+                    break;
             }
             document.getElementById('search_input').value = search.value
 
@@ -176,7 +181,7 @@
           $('a#compare_form').on('click', function(e){
             e.preventDefault()
             console.log("Compare")
-            searc = document.getElementById('search_input')
+            search = document.getElementById('search_input')
             search_2 = document.getElementById('search_input_2')
             nat_div = document.getElementById("nat_data")
             lab_div = document.getElementById("lab_data")
@@ -338,7 +343,7 @@
                         <div class="input-group-append">
                             <form id="search-word">
                             <a href="#" id="search_form">
-                                <button onclick="searchWord(); clicktest()" class="btn btn-primary" type="button">
+                                <button onclick="searchWord('topsearch'); clicktest()" class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </a> </form>
@@ -441,7 +446,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-4">
-                                <div onclick="openTab(event, 'compare_words')" style="cursor:pointer;" class="nav-card card border-left-success shadow h-100 py-2">
+                                <div onclick="openTab(event, 'compare')" style="cursor:pointer;" class="nav-card card border-left-success shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
                                             <div class="col mr-2">
@@ -517,7 +522,7 @@
                                 <div class="input-group-append">
                                     <form id="search-word">
                                     <a href="#" id="search_form">
-                                        <button onclick="searchWord(); clicktest('frequencies')" class="btn btn-primary" type="button">
+                                        <button onclick="searchWord('frequencies'); clicktest('frequencies')" class="btn btn-primary" type="button">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
                                     </a> </form>
@@ -589,7 +594,7 @@
                                 <div class="input-group-append">
                                     <form id="search-word">
                                     <a href="#" id="search_form">
-                                        <button onclick="searchWord(); clicktest('wordclouds')" class="btn btn-primary" type="button">
+                                        <button onclick="searchWord('frequencies'); clicktest('wordclouds')" class="btn btn-primary" type="button">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
                                     </a> </form>
@@ -625,7 +630,7 @@
                                 <div class="input-group-append">
                                     <form id="search-word">
                                     <a href="#" id="search_form">
-                                        <button onclick="searchWord(); clicktest('related_words')" class="btn btn-primary" type="button">
+                                        <button onclick="searchWord('frequencies'); clicktest('related_words')" class="btn btn-primary" type="button">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
                                     </a> </form>
