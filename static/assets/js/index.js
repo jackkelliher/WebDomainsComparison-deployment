@@ -42,6 +42,13 @@ function searchWord(search_area) {
       break;
     case 'frequencies':
       search = document.getElementById('search_input_frequencies')
+      break;
+    case 'wordclouds':
+      search = document.getElementById('search_input_wordcloud')
+      break;
+    case 'related':
+      search = document.getElementById('search_input_related')
+      break;
   }
   if(document.getElementById("lab_data")){
     document.getElementById("lab_data").innerHTML = ""
@@ -95,6 +102,8 @@ function create_graphs(data){
 function find_word(word) {
     //Getting data 
     console.log(word)
+    csv_data_labour = "none"
+    csv_data_national = "none"
     for(item of data_collection["Labour"]){
       if(item["word"] == word) {
         csv_data_labour = item
@@ -105,6 +114,10 @@ function find_word(word) {
       if(item["word"] == word) {
         csv_data_national = item
       }
+    }
+
+    if(csv_data_labour =="none" || csv_data_national == "none"){
+      console.log("none")
     }
 
     return [csv_data_labour, csv_data_national]
@@ -630,7 +643,7 @@ function create_wordcloud(wordcloud_data) {
   colour = wordcloud_data[1]
   title = wordcloud_data[2]
   wordcloud_div = null
-
+  console.log(title)
   //Clearing wordcloud divs
   
   //document.getElementById("lab_wordclouds").innerHTML = ""
@@ -645,10 +658,29 @@ function create_wordcloud(wordcloud_data) {
     title = "Top Words"
     wordcloud_div = document.getElementById("lab_wordclouds")
     document.getElementById("nat_wordclouds").innerHTML = ""
+  } else if (title == 'compare_lab'){
+    title = "Labour-landing"
+    console.log("compare_lab")
+    wordcloud_div = document.getElementById('compare_lab_wordclouds')
+  } else if (title == 'compare_nat'){
+    title = "National-landing"
+    wordcloud_div = document.getElementById('compare_nat_wordclouds')
   }
   wordcloud_div.innerHTML = ""
   wordcloud_div.innerHTML += "<div id = 'wordcloud_card' class='card shadow'></div>"
-  document.getElementById("wordcloud_card").innerHTML += "<div class='card-header py-3 d-flex flex-row align-items-center justify-content-between'><h6 class='m-0 font-weight-bold text-primary'>" + title + " </h6> </div><div id = 'my_dataviz'></div>"
+  display_title = false
+  if(title == 'Labour-landing' || title == 'National-landing'){
+    display_title = true
+  }
+  if(!display_title){
+    document.getElementById("wordcloud_card").innerHTML += "<div class='card-header py-3 d-flex flex-row align-items-center justify-content-between'><h6 class='m-0 font-weight-bold text-primary'>" + title + " </h6> </div><div id = 'my_dataviz'></div>"
+  } else {
+    if(title == 'Labour-landing'){
+      document.getElementById("wordcloud_card").innerHTML += "<div class='card-header py-3 d-flex flex-row align-items-center justify-content-between'><h6 class='m-0 font-weight-bold text-primary'>" + "Labour" + " </h6> </div><div id = 'my_dataviz'></div>"
+    } else {
+      document.getElementById("wordcloud_card").innerHTML += "<div class='card-header py-3 d-flex flex-row align-items-center justify-content-between'><h6 class='m-0 font-weight-bold text-primary'>" + "National" + " </h6> </div><div id = 'my_dataviz'></div>"
+    }
+  }
   //Setting the id of the div to nothing in order to allow for 'wordcloud_card' to be created/targeted multiple times
   if(title == "Labour"){
     document.getElementById('wordcloud_card').innerHTML += "<div style='background-color: #f8f9fc;' id='lab_textdiv'></div>"
@@ -656,6 +688,10 @@ function create_wordcloud(wordcloud_data) {
     document.getElementById('wordcloud_card').innerHTML += "<div style='background-color: #f8f9fc;' id='nat_textdiv'></div>"
   } else if (title == "Top Words") {
     document.getElementById('wordcloud_card').innerHTML += "<div style='background-color: #f8f9fc;' id='top_textdiv'></div>"
+  } else if (title == "Labour-landing"){
+    document.getElementById('wordcloud_card').innerHTML += "<div style='background-color: #f8f9fc;' id='l_landing_textdiv'></div>"
+  } else if (title == "National-landing"){
+    document.getElementById('wordcloud_card').innerHTML += "<div style='background-color: #f8f9fc;' id='n_landing_textdiv'></div>"
   }
   document.getElementById("wordcloud_card").id = ""
   //Sizes to use for the wordcloud (Similarity numbers are too similar)
@@ -738,8 +774,12 @@ function showtip(word, size, party){
     div = document.getElementById("lab_textdiv")
   } else if(party == 'Top Words') {
     div = document.getElementById("top_textdiv")
-  } else {
+  } else if(party == 'National') {
     div = document.getElementById("nat_textdiv")
+  } else if(party == 'Labour-landing'){
+    div = document.getElementById('l_landing_textdiv')
+  } else if (party == 'National-landing'){
+    div = document.getElementById('n_landing_textdiv')
   }
   if(size != 'Undefined'){
     round_size = parseFloat(size).toFixed(3)
@@ -853,6 +893,7 @@ function openTab(evt, tabName) {
     case 'wordclouds':
       //evt.currentTarget.className += ' active'
       document.getElementById("wordclouds").style.display = "block"
+      compare_clouds()
       break;
     case 'related':
       document.getElementById("related_words").style.display = "block"
@@ -886,7 +927,34 @@ function openTab(evt, tabName) {
   } else */if(tabName != "none") {
 
   // Show the current tab, and add an "active" class to the button that opened the tab*/
-  document.getElementById(tabName).style.display = "block";
+  //document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
+  
+  } else {
+    console.log("none")
+    document.getElementById("topsearch").style.display = "none"
   }
+}
+
+//Used to display the 
+function compare_clouds(){
+
+  lab_array = data_collection["Labour"]
+  nat_array = data_collection["National"]
+  //Generating random colours for each piece of data
+  colour_1 = '#' + Math.floor(Math.random()*16777215).toString(16)
+  colour_2 = '#' + Math.floor(Math.random()*16777215).toString(16)
+
+  //Sorts the party_array from most used to least used
+  top_words_lab = lab_array.sort(function(a,b) {
+    return Number(b.count) - Number(a.count)
+  })
+
+  top_words_nat = nat_array.sort(function(a,b) {
+    return Number(b.count) - Number(a.count)
+  })
+  top_lab = top_words_lab.slice(0,25)
+  top_nat = top_words_nat.slice(0,25)
+  create_wordcloud([top_lab,colour_1,"compare_lab"])
+  create_wordcloud([top_lab,colour_2,"compare_nat"])
 }

@@ -77,7 +77,7 @@
                 $.get('/get_word2vec/' + word_1 + '/' + word_2,
                     function(data) {
                         if(data == 'na') {
-                            alert("There are no occurances of " + word_2 + ". Please try another word")
+                            alert("There are no occurances of one of the searched words. Please try another word")
                             openTab(event, 'compare')
                             exit()
                         } else {
@@ -144,10 +144,12 @@
                     if(data_dict["labour"] == "No Occurances" || data_dict["national"] == "No Occurances") {
                         console.log("No Occurances")
                         alert("No Occurances of this word exist in the corpus. Returning to homepage.")
+                        document.getElementById('topsearch').style.display = "none"
                         openTab(event, 'none')
 
-                    }
+                    } else {
                     document.getElementById('topsearch').style.display = ""
+                    }
                     national_data = data_dict["national"]
                     labour_data = data_dict["labour"]
                     create_wordcloud([labour_data, '#ed1c1c', 'Labour'])
@@ -496,7 +498,7 @@
                                 </div>
                                 <div class="container-fluid">
                                 <div class="search-text-div" id="search-text">
-                                    <h6 class="search-text center-align m-0 font-weight-bold text-primary">An overview of data from the Labour parties website and its most used words.</h6>
+                                    <h6 class="search-text center-align m-0 font-weight-bold text-primary">An overview of data from the National parties website and its most used words.</h6>
                                 </div>
                                 <div class="input-group">
                             </div>
@@ -594,10 +596,18 @@
                                 <div class="input-group-append">
                                     <form id="search-word">
                                     <a href="#" id="search_form">
-                                        <button onclick="searchWord('frequencies'); clicktest('wordclouds')" class="btn btn-primary" type="button">
+                                        <button onclick="searchWord('wordclouds'); clicktest('wordclouds')" class="btn btn-primary" type="button">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
                                     </a> </form>
+                                </div>
+                            </div>
+                            <div id="landing-wordclouds">
+                                <div class="title-decoration" style="font-size: 25px; text-align: center; margin-top: 15px;">Top Words From Each Party</div>
+                                <div id="wordcloud_compare_divs" style="flex-direction: row;display: flex;">
+                                    
+                                    <div id="compare_lab_wordclouds" style="margin-top:10px;" class="wordcloud col-lg-5"></div>
+                                    <div id="compare_nat_wordclouds" style="margin-top:10px;"  class="wordcloud col-lg-5"></div>
                                 </div>
                             </div>
                         </div>
@@ -630,7 +640,7 @@
                                 <div class="input-group-append">
                                     <form id="search-word">
                                     <a href="#" id="search_form">
-                                        <button onclick="searchWord('frequencies'); clicktest('related_words')" class="btn btn-primary" type="button">
+                                        <button onclick="searchWord('related'); clicktest('related_words')" class="btn btn-primary" type="button">
                                             <i class="fas fa-search fa-sm"></i>
                                         </button>
                                     </a> </form>
@@ -645,6 +655,7 @@
                                 <button id="related_words_toggle" onclick="toggle_related_words()" class="toggle-buttons">Show All Related Words</button>
                             </div>-->
                             <div class="container-fluid">
+                                <div style="margin-left:-0.75rem; font-size:25px; margin-bottom:15px;">Most closely Related Words</div>
                                 <div id="lab_data" class="vector_data row"></div>
                                 <div id="nat_data" class="vector_data row"></div>
                             </div>
