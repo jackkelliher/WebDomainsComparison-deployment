@@ -69,6 +69,8 @@
             console.log("compare")
             word_1 = document.getElementById("search_input_compare_1").value
             word_2 = document.getElementById("search_input_compare_2").value
+            word_1 = word_1.toLowerCase()
+            word_2 = word_2.toLowerCase()
             if(!word_1 || !word_2){
                 alert("Please enter a word in both searchbars in order to compare them.")
                 return
@@ -120,6 +122,9 @@
                     break;
             }
             document.getElementById('search_input').value = search.value
+            search_value = search.value
+            search_value = search_value.toLowerCase()
+            console.log(search_value)
 
 
 
@@ -138,7 +143,7 @@
             nat_div.innerHTML = ""
             lab_div.innerHTML = ""
             title.innerHTML = ""
-            $.get('/get_word2vec/' + search.value,
+            $.get('/get_word2vec/' + search_value,
                 function(data_dict, status) {
                     console.log(data_dict)
                     if(data_dict["labour"] == "No Occurances" || data_dict["national"] == "No Occurances") {
@@ -191,13 +196,20 @@
             nat_div.innerHTML = ""
             lab_div.innerHTML = ""
             title.innerHTML = ""
-            $.get('/get_word2vec/' + search_1.value + '/' + search_2.value,
+            search_1_value = search_1.value
+            search_2_value = search_2.value 
+            search_1_value = search_1_value.toLowerCase()
+            search_2_value = search_2_value.toLowerCase()
+            console.log(search_1_value)
+            console.log(search_2_value)
+
+            $.get('/get_word2vec/' + search_1_value + '/' + search_2_value,
                 function(data) {
                     console.log("Compare")
                     nat_similarity = data["nat_similarity"]
                     lab_similarity = data["lab_similarity"]
 
-                    title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800">Similarity between words "' + search_1.value + '" and "' + search_2.value + '"</h1></div><hr>'
+                    title.innerHTML = '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h1 class="h3 mb-0 text-gray-800">Similarity between words "' + search_1_value + '" and "' + search_2_value + '"</h1></div><hr>'
                     lab_div.innerHTML += '<div class="d-sm-flex align-items-center justify-content-between mb-4"><h3 class="h6 mb-0 text-gray-800">(The higher the similarity value, the more likely the words will be seen together)</h3></div>'
 
                     lab_div.innerHTML += '<div class="mb-4"><div class="card labour_left_border shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-uppercase mb-1">' + "Similarity for Labour" + '</div><div class="h5 mb-0 font-weight-bold text-gray-800">'+ lab_similarity +'</div></div><div class="col-auto"></div></div></div></div></div>'

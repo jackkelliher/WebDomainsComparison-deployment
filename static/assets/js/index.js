@@ -57,7 +57,9 @@ function searchWord(search_area) {
   if(search.value == "") {
     search = document.getElementById("search_input") //Retrieving the data from the search field
   }*/
-  words_data = find_word(search.value) //Using the find_word function to retrieve the suitable data from each of the parties
+  search_value = search.value
+  search_value = search_value.toLowerCase()
+  words_data = find_word(search_value) //Using the find_word function to retrieve the suitable data from each of the parties
   colours = ['#bd1313', '#133087'] //Setting colours array to the suitable colour for each of the parties
   //If else function to determine which data is larger
   if(words_data[0]["count"] > words_data[1]["count"]) {
